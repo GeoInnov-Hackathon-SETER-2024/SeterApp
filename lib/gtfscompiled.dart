@@ -41,7 +41,7 @@ class GtfsApiClient {
   }
 
   Future<String> getStopTimes() async {
-    return _get('/stop_times');
+    return _get('/temps-theorique/stop-times');
   }
 }
 

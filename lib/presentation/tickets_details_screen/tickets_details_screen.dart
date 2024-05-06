@@ -271,7 +271,7 @@ class TicketsDetailsScreenState extends ConsumerState<TicketsDetailsScreen> {
                             width: 250.h,
                             text: "lbl_acheter".tr,
                             onPressed: () {
-                              onTapAcheter(context);
+                              onTapAcheter;
                             },
                             alignment: Alignment.center)
                       ])),

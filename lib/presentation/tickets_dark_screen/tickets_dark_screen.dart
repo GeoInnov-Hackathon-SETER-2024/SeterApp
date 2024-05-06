@@ -273,7 +273,9 @@ class TicketsDarkScreenState extends ConsumerState<TicketsDarkScreen> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          onTappRIX;
+                          NavigatorService.pushNamed(
+                            AppRoutes.paymentMethodScreen,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 35.v, horizontal: 8.h),

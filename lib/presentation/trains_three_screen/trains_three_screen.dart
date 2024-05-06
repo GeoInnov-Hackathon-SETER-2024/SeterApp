@@ -216,6 +216,87 @@ class TrainsThreeScreenState extends ConsumerState<TrainsThreeScreen> {
     }
   }
 
+  Future<List<String>> _getTrainsWithinHour(String departureStation) async {
+    try {
+      final apiClient = GtfsApiClient(
+        baseUrl: 'https://api-hackathon.seter.sn/api',
+        token: 'p19bkCMOjd4vWyDKI64joB0AyGbosKRZLHrklpdVctfu9WvIvLAVfwi0VRVv6yvf',
+      );
+
+      final timeData = await apiClient.getStopTimes();
+      final stopsList = _parseTimeData(timeData);
+
+      // Get the current hour and minute
+      final now = DateTime.now();
+      final currentHour = now.hour;
+      final currentMinute = now.minute;
+
+      // Get all departure times within an hour of the current time
+      final departureTimesWithinHour = stopsList
+          .where((stop) {
+        final stopHeadsign = stop['stop_headsign'].toLowerCase();
+        final departureStationLowerCase = departureStation.toLowerCase();
+        // Check if the stop_headsign contains the departure station
+        if (stopHeadsign.contains(departureStationLowerCase)) {
+          // Check if the departure time is within an hour of the current time
+          final departureHour = int.parse(stop['departure_time'].split(':')[0]);
+          final departureMinute = int.parse(stop['departure_time'].split(':')[1]);
+          if ((departureHour - currentHour).abs() < 1) {
+            if (departureHour == currentHour) {
+              // Include trains that depart within the next hour, including the current minute
+              return departureMinute >= currentMinute;
+            } else {
+              // Include trains that depart within the next hour
+              return true;
+            }
+          }
+        }
+        return false;
+      })
+          .map((stop) => stop['departure_time'] as String)
+          .toList();
+
+      // Sort the departure times and remove duplicates
+      departureTimesWithinHour.sort();
+      final uniqueDepartureTimesWithinHour = departureTimesWithinHour.toSet().toList();
+
+      return uniqueDepartureTimesWithinHour;
+    } catch (e) {
+      throw Exception('Failed to get trains within an hour: $e');
+    }
+  }
+
+  List<Map<String, dynamic>> _parseTimeData(String timeData) {
+    final lines = timeData.split('\n');
+    final stopsList = <Map<String, dynamic>>[];
+    // Skip the first line (header) and start parsing from the second line
+    for (var i = 1; i < lines.length; i++) {
+      final values = lines[i].split(',');
+      if (values.length >= 10) {
+        try {
+          final stop = {
+            'trip_id': values[0],
+            'arrival_time': values[1],
+            'departure_time': values[2],
+            'stop_id': values[3],
+            'stop_sequence': values[4],
+            'stop_headsign': values[5],
+            'pickup_type': values[6],
+            'drop_off_type': values[7],
+            'shape_dist_traveled': values[8],
+            'timepoint': values[9],
+          };
+          stopsList.add(stop);
+        } catch (e) {
+          print('Error parsing line: ${lines[i]}');
+          print('Values: $values');
+          print(e);
+        }
+      }
+    }
+    return stopsList;
+  }
+
 
   List<Map<String, dynamic>> _parseStopsData(String stopsData) {
     final lines = stopsData.split('\n');
@@ -254,196 +335,197 @@ class TrainsThreeScreenState extends ConsumerState<TrainsThreeScreen> {
 
 
   Widget _buildTrainDetailsSection(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 46.v),
+        height: 400, // Set a fixed height for the train details section
         decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              ImageConstant.imgGroup23,
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 19.v),
-            Padding(
-              padding: EdgeInsets.only(left: 38.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Départ".tr,
-                    style: CustomTextStyles.titleMediumBlack90002,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 70.h),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: DropdownButton<String>(
-                        value: departureStation,
-                        onChanged: (String? newValue) async {
-                          setState(() {
-                            departureStation = newValue!;
-                          });
-                          await _updateMap(); // Update the map when the departure station is selected
-                        },
-                        items: stations.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.h),
-                              child: Text(
-                                value,
-                                style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 6.v),
-            Container(
-              height: 4.adaptSize,
-              width: 4.adaptSize,
-              margin: EdgeInsets.only(left: 43.h),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            SizedBox(height: 4.v),
-            Container(
-              height: 4.adaptSize,
-              width: 4.adaptSize,
-              margin: EdgeInsets.only(left: 43.h),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            SizedBox(height: 3.v),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 293.h,
-                child: Divider(
-                  color: appTheme.black90002.withOpacity(0.5),
-                ),
-              ),
-            ),
-            Container(
-              height: 4.adaptSize,
-              width: 4.adaptSize,
-              margin: EdgeInsets.only(left: 43.h),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            SizedBox(height: 4.v),
-            Container(
-              height: 4.adaptSize,
-              width: 4.adaptSize,
-              margin: EdgeInsets.only(left: 43.h),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            SizedBox(height: 7.v),
-            Padding(
-              padding: EdgeInsets.only(left: 40.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Arrivée".tr,
-                    style: CustomTextStyles.titleMediumBlack90002,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 70.h),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: DropdownButton<String>(
-                        value: arrivalStation,
-                        onChanged: (String? newValue) async {
-                          setState(() {
-                            arrivalStation = newValue!;
-                          });
-                          await _updateMap();
-                        },
-                        items: stations.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.h),
-                              child: Text(
-                                value,
-                                style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20.v),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Prochain train".tr,
-                        style: CustomTextStyles.titleMediumBlack90002,
-                      ),
-                      SizedBox(height: 10.v),
-                      Row(
-                        children: [
-                          Text(
-                            "Matricule:".tr,
-                            style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                          ),
-                          SizedBox(width: 5.h),
-                          Text(
-                            "123456", // Replace with actual train matricule
-                            style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  CustomIconButton(
-                    height: 30.adaptSize,
-                    width: 30.adaptSize,
-                    padding: EdgeInsets.all(6.h),
-                    decoration: IconButtonStyleHelper.outlineBlackTL15,
-                    child: CustomImageView(
-                      imagePath: ImageConstant.imgArrowRightPrimary,
-                    ),
-                  ),
-                ],
-              ),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
             ),
           ],
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 19),
+              Padding(
+                padding: EdgeInsets.only(left: 38),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Départ".tr,
+                      style: CustomTextStyles.titleMediumBlack90002,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 70),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: DropdownButton<String>(
+                          value: departureStation,
+                          onChanged: (String? newValue) async {
+                            setState(() {
+                              departureStation = newValue!;
+                            });
+                            await _updateMap(); // Update the map when the departure station is selected
+                          },
+                          items: stations.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 6),
+              Container(
+                height: 4,
+                width: 4,
+                margin: EdgeInsets.only(left: 43),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              SizedBox(height: 4),
+              Container(
+                height: 4,
+                width: 4,
+                margin: EdgeInsets.only(left: 43),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              SizedBox(height: 3),
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 293,
+                  child: Divider(
+                    color: appTheme.black90002.withOpacity(0.5),
+                  ),
+                ),
+              ),
+              Container(
+                height: 4,
+                width: 4,
+                margin: EdgeInsets.only(left: 43),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              SizedBox(height: 4),
+              Container(
+                height: 4,
+                width: 4,
+                margin: EdgeInsets.only(left: 43),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              SizedBox(height: 7),
+              Padding(
+                padding: EdgeInsets.only(left: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:[
+                    Text(
+                      "Arrivée".tr,
+                      style: CustomTextStyles.titleMediumBlack90002,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 70),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: DropdownButton<String>(
+                          value: arrivalStation,
+                          onChanged: (String? newValue) async {
+                            setState(() {
+                              arrivalStation = newValue!;
+                            });
+                            await _updateMap();
+                          },
+                          items: stations.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Prochains Trains".tr,
+                      style: CustomTextStyles.titleMediumBlack90002,
+                    ),
+                    SizedBox(height: 20),
+                    FutureBuilder<List<String>>(
+                      future: _getTrainsWithinHour(departureStation),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (snapshot.hasData) {
+                          final departureTimes = snapshot.data!;
+                          return Column(
+                            children: departureTimes.map((departureTime) {
+                              return Text(
+                                departureTime,
+                                style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                              );
+                            }).toList(),
+                          );
+                        } else {
+                          return Text('No data');
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
   Widget _buildMapAndTrainDetails(BuildContext context) {
     return Column(
       children: [

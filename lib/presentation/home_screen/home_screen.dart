@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino icons
 import 'package:ibrahima_s_application_seter/core/app_export.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -66,15 +67,15 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
     if (translatedText.toLowerCase().contains('train')) {
       onTapTrain(context);
     } else if (translatedText.toLowerCase().contains('station')) {
-      onTapBagage(context);
+      onTapStations(context);
     } else if (translatedText.toLowerCase().contains('abonnement')) {
       onTapAbonnement(context);
     } else if (translatedText.toLowerCase().contains('bagages')) {
-      onTapTwentySix(context);
+      onTapBagages(context);
     } else if (translatedText.toLowerCase().contains('ticket')) {
       onTapTrainTicket(context);
     } else if (translatedText.toLowerCase().contains('horaires')) {
-      onTapTwentyEight(context);
+      onTapHoraires(context);
     }
   }
 
@@ -259,19 +260,19 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
                     children: [
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgTrain,
+                        iconData: CupertinoIcons.tram_fill,
                         label: "lbl_stations".tr,
-                        onTap: onTapBagage,
+                        onTap: onTapStations,
                       ),
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgFaSolidBoxOpen,
+                        iconData: CupertinoIcons.bag_fill,
                         label: "lbl_bagages".tr,
-                        onTap: onTapTwentySix,
+                        onTap: onTapBagages,
                       ),
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgAbonnement,
+                        iconData: CupertinoIcons.square_grid_2x2_fill,
                         label: "lbl_abonnement".tr,
                         onTap: onTapAbonnement,
                       ),
@@ -282,21 +283,21 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
                     children: [
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgTicket,
+                        iconData: CupertinoIcons.ticket_fill,
                         label: "lbl_tickets".tr,
                         onTap: onTapTrainTicket,
                       ),
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgTrain, // Replace with correct image
+                        iconData: CupertinoIcons.tram_fill,
                         label: "lbl_trains".tr,
-                        onTap: onTapTrain, // Replace with correct onTap function
+                        onTap: onTapTrain,
                       ),
                       _buildIcon(
                         context,
-                        imagePath: ImageConstant.imgHoraires, // Replace with correct image
+                        iconData: CupertinoIcons.clock_fill,
                         label: "lbl_horaires".tr,
-                        onTap: onTapTwentyEight, // Replace with correct onTap function
+                        onTap: onTapHoraires,
                       ),
                     ],
                   ),
@@ -335,7 +336,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
 
   Widget _buildIcon(
       BuildContext context, {
-        required String imagePath,
+        required IconData iconData,
         required String label,
         required Function onTap,
       }) {
@@ -354,11 +355,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
               color: Color(0x2280542B), // 14% opacity
               borderRadius: BorderRadius.circular(36.0),
             ),
-            child: CustomImageView(
-              imagePath: ImageConstant.imgTrain,
-              height: 48.adaptSize,
-              width: 48.adaptSize,
-              alignment: Alignment.center,
+            child: Icon(
+              iconData,
+              size: 48.adaptSize,
+              color: Color(0xFF6C4B26), // Brown color
             ),
           ),
           SizedBox(height: 9.v),
@@ -374,21 +374,21 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
     );
   }
 
-  void onTapBagage(BuildContext context) {
+  void onTapStations(BuildContext context) {
+    NavigatorService.pushNamed(
+      AppRoutes.stationsScreen,
+    );
+  }
+
+  void onTapBagages(BuildContext context) {
     NavigatorService.pushNamed(
       AppRoutes.bagages1DarkScreen,
     );
   }
 
-  void onTapTwentyEight(BuildContext context) {
+  void onTapHoraires(BuildContext context) {
     NavigatorService.pushNamed(
       AppRoutes.horaire1DarkScreen,
-    );
-  }
-
-  void onTapTwentySix(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.ticketsDarkScreen,
     );
   }
 
