@@ -104,7 +104,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
       onTapBagages(context);
     } else if (translatedText.toLowerCase().contains('ticket')) {
       onTapTrainTicket(context);
-    } else if (translatedText.toLowerCase().contains('horaires')) {
+    } else if (translatedText.toLowerCase().contains('horaire')) {
       onTapHoraires(context);
     }
   }
