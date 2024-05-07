@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibrahima_s_application_seter/core/app_export.dart';
 import 'package:ibrahima_s_application_seter/widgets/custom_icon_button.dart';
@@ -38,23 +39,29 @@ class ThemeDarkScreenState extends ConsumerState<ThemeDarkScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CustomImageView(
-                                      imagePath: ImageConstant.lightMode,
-                                      height: 24.adaptSize,
-                                      width: 24.adaptSize,
-                                      margin: EdgeInsets.only(
-                                          left: 18.h, top: 18.v, bottom: 18.v),
-                                      onTap: () {
-                                        onTapImgIcon(context);
-                                      }),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // Handle tap on sun icon
+                                      onTapImgIcon;
+                                    },
+                                    child: Icon(
+                                      CupertinoIcons.sun_min,
+                                      size: 24.adaptSize,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+
                                   CustomIconButton(
                                       height: 60.adaptSize,
                                       width: 60.adaptSize,
                                       padding: EdgeInsets.all(18.h),
                                       decoration:
                                           IconButtonStyleHelper.fillBlueGray,
-                                      child: CustomImageView(
-                                          imagePath: ImageConstant.darkMode))
+                                      child: Icon(
+                                        CupertinoIcons.moon,
+                                        size: 24.adaptSize,
+                                        color: Colors.white,
+                                      ),)
                                 ]))
                       ])),
                   Spacer(flex: 33),

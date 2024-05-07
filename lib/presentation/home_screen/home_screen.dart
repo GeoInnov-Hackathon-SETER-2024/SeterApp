@@ -14,6 +14,36 @@ class HomeScreen extends ConsumerStatefulWidget {
   @override
   HomeScreenState createState() => HomeScreenState();
 }
+class CustomScrollPhysics extends ScrollPhysics {
+  const CustomScrollPhysics({ScrollPhysics? parent}) : super(parent: parent);
+
+  @override
+  CustomScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return CustomScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    return offset;
+  }
+
+  @override
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position,
+      double velocity,
+      ) {
+    final tolerance = this.tolerance;
+    if ((velocity <= 0.0 && position.pixels <= position.minScrollExtent) ||
+        (velocity >= 0.0 && position.pixels >= position.maxScrollExtent)) {
+      return super.createBallisticSimulation(position, velocity);
+    }
+    final simulation = ScrollSpringSimulation(spring, position.pixels, position.maxScrollExtent, velocity,
+        tolerance: tolerance);
+    return simulation;
+  }
+}
+
+
 
 class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin {
   late PageController _pageController;
@@ -30,7 +60,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 1000);
     _startTimer();
     _initializeSpeech();
     assistant = WolofAssistant();
@@ -94,12 +124,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      _currentPage = (_currentPage + 1) % 6; // Assuming you have 6 images
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           _currentPage,
@@ -132,6 +158,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
                     children: [
                       PageView(
                         controller: _pageController,
+                        physics: CustomScrollPhysics(),
                         onPageChanged: (int page) {
                           setState(() {
                             _currentPage = page;
@@ -382,7 +409,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
 
   void onTapBagages(BuildContext context) {
     NavigatorService.pushNamed(
-      AppRoutes.bagages1DarkScreen,
+      AppRoutes.bagagesScreen,
     );
   }
 

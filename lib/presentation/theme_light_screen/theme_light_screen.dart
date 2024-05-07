@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ibrahima_s_application_seter/core/app_export.dart';
 import 'package:ibrahima_s_application_seter/widgets/custom_icon_button.dart';
@@ -70,8 +71,10 @@ class ThemeLightScreenState extends ConsumerState<ThemeLightScreen> {
                               width: 60.adaptSize,
                               padding: EdgeInsets.all(18.h),
                               decoration: IconButtonStyleHelper.fillPrimaryTL30,
-                              child: CustomImageView(
-                                imagePath: ImageConstant.lightMode,
+                              child: Icon(
+                                CupertinoIcons.sun_min,
+                                size: 24.adaptSize,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -88,16 +91,12 @@ class ThemeLightScreenState extends ConsumerState<ThemeLightScreen> {
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.darkMode,
-                              height: 24.adaptSize,
-                              width: 24.adaptSize,
-                              margin: EdgeInsets.only(
-                                top: 18.v,
-                                right: 18.h,
-                                bottom: 18.v,
-                              ),
+                            child: Icon(
+                              CupertinoIcons.moon,
+                              size: 24.adaptSize,
+                              color: Colors.white,
                             ),
+
                           ),
                         ],
                       ),

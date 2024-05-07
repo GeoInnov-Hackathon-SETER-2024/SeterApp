@@ -49,11 +49,12 @@ import 'package:ibrahima_s_application_seter/presentation/trains_three_screen/tr
 import 'package:ibrahima_s_application_seter/presentation/abonnement_screen/abonnement_screen.dart';
 import 'package:ibrahima_s_application_seter/presentation/tickets_dark_screen/tickets_dark_screen.dart';
 import 'package:ibrahima_s_application_seter/presentation/getinh_started_2_dark_screen/getinh_started_2_dark_screen.dart';
-import 'package:ibrahima_s_application_seter/presentation/bagages_1_dark_screen/bagages_1_dark_screen.dart';
+import 'package:ibrahima_s_application_seter/presentation/bagages_1_dark_screen/bagages_screen.dart';
 import 'package:ibrahima_s_application_seter/presentation/pw_reset_screen/pw_reset_screen.dart';
 import 'package:ibrahima_s_application_seter/presentation/payment_method_screen/payment_method_screen.dart';
 import 'package:ibrahima_s_application_seter/presentation/app_navigation_screen/app_navigation_screen.dart';
 
+import '../presentation/bagages_1_screen/bagages_1_dark_screen.dart';
 import '../presentation/menu_dark_draweritem/menu_dark_draweritem.dart';
 import '../presentation/number_login_screen.dart';
 import '../presentation/tickets_screen/tickets_screen.dart';
@@ -111,6 +112,8 @@ class AppRoutes {
   static const String frameFiveScreen = '/frame_five_screen';
 
   static const String parcleScreen = '/parcle_screen';
+
+  static const String bagagesScreen = '/bagages_screen';
 
   static const String themeLightScreen = '/theme_light_screen';
 
@@ -232,6 +235,7 @@ class AppRoutes {
     ticketsDarkScreen: (context) => TicketsDarkScreen(),
     getinhStarted2DarkScreen: (context) => GetinhStarted2DarkScreen(),
     bagages1DarkScreen: (context) => Bagages1DarkScreen(),
+    bagagesScreen: (context) => ArcGISMapScreen(),
     pwResetScreen: (context) => PwResetScreen(),
     paymentMethodScreen: (context) => PaymentMethodScreen(),
     appNavigationScreen: (context) => AppNavigationScreen(),

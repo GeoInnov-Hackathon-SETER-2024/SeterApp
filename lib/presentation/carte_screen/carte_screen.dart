@@ -22,8 +22,8 @@ class CarteScreenState extends ConsumerState<CarteScreen> {
                     children: [
                       CustomImageView(
                           imagePath: ImageConstant.imgArrowLeftPrimary,
-                          height: 19.v,
-                          width: 10.h,
+                          height: 25.v,
+                          width: 14.h,
                           margin: EdgeInsets.only(left: 14.h),
                           onTap: () {
                             onTapImgArrowLeft(context);
@@ -38,7 +38,7 @@ class CarteScreenState extends ConsumerState<CarteScreen> {
   Widget _buildComponentThree(BuildContext context) {
     return Container(
         margin: EdgeInsets.only(left: 9.h),
-        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 54.v),
+        padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 90.v),
         decoration: BoxDecoration(
             borderRadius: BorderRadiusStyle.roundedBorder10,
             image: DecorationImage(
@@ -53,7 +53,7 @@ class CarteScreenState extends ConsumerState<CarteScreen> {
                       CustomTextStyles.headlineSmallAbyssinicaSILWhiteA70001),
               SizedBox(height: 7.v),
               Padding(
-                  padding: EdgeInsets.only(right: 192.h),
+                  padding: EdgeInsets.only(right: 180.h),
                   child: Row(children: [
                     Text("lbl_2002".tr,
                         style: CustomTextStyles.bodyLargeAdobeBlankWhiteA70001),
@@ -67,7 +67,7 @@ class CarteScreenState extends ConsumerState<CarteScreen> {
                     Text("lbl_3003".tr,
                         style: CustomTextStyles.bodyLargeAdobeBlankWhiteA70001)
                   ])),
-              SizedBox(height: 7.v)
+              SizedBox(height: 27.v)
             ]));
   }
 
