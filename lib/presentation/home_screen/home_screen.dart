@@ -172,6 +172,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderState
                             alignment: Alignment.center,
                           ),
                           CustomImageView(
+                            imagePath: ImageConstant.imgPa9,
+                            height: 485.v,
+                            width: screenWidth,
+                            alignment: Alignment.center,
+                          ),
+                          CustomImageView(
                             imagePath: ImageConstant.imgPa4,
                             height: 485.v,
                             width: screenWidth,
