@@ -4,8 +4,10 @@ import 'dart:math';
 import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ibrahima_s_application_seter/core/app_export.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:ibrahima_s_application_seter/widgets/custom_icon_button.dart';
 
 import '../../gtfscompiled.dart';
@@ -21,6 +23,17 @@ class TrainsThreeScreen extends ConsumerStatefulWidget {
 }
 
 class TrainsThreeScreenState extends ConsumerState<TrainsThreeScreen> {
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  @override
+  void initState() {
+    super.initState();
+    var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    var initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
   Completer<GoogleMapController> googleMapController = Completer();
   List<String> stations = [
     'Dakar',
@@ -266,6 +279,48 @@ class TrainsThreeScreenState extends ConsumerState<TrainsThreeScreen> {
     }
   }
 
+  Future<void> _scheduleNotifications(List<String> departureTimesWithinHour) async {
+    final now = DateTime.now();
+    final scheduledNotifications = departureTimesWithinHour.map((departureTime) {
+      final hour = int.parse(departureTime.split(':')[0]);
+      final minute = int.parse(departureTime.split(':')[1]);
+      final scheduledTime = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day,
+        hour,
+        minute,
+      );
+      return flutterLocalNotificationsPlugin.zonedSchedule(
+        Random().nextInt(1000), // Notification ID
+        'Train Departure', // Notification title
+        'Train departing at $departureTime from $departureStation station', // Notification body
+        scheduledTime, // Scheduled time
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'your_channel_id', // Channel ID
+            'your_channel_name', // Channel name
+            //'your_channel_description', // Channel description
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+
+    }).toList();
+
+    await Future.wait(scheduledNotifications);
+  }
+
+  Future<void> _updateMapAndScheduleNotifications() async {
+    await _updateMap();
+    final departureTimesWithinHour = await _getTrainsWithinHour(departureStation);
+    await _scheduleNotifications(departureTimesWithinHour);
+  }
+
   List<Map<String, dynamic>> _parseTimeData(String timeData) {
     final lines = timeData.split('\n');
     final stopsList = <Map<String, dynamic>>[];
@@ -377,7 +432,7 @@ class TrainsThreeScreenState extends ConsumerState<TrainsThreeScreen> {
                             setState(() {
                               departureStation = newValue!;
                             });
-                            await _updateMap(); // Update the map when the departure station is selected
+                            await _updateMapAndScheduleNotifications(); // Update the map and schedule notifications
                           },
                           items: stations.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(

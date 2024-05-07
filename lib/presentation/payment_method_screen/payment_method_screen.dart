@@ -1,8 +1,9 @@
-import '../payment_method_screen/widgets/paymentmethod_item_widget.dart';
-import 'models/paymentmethod_item_model.dart';
-import 'notifier/payment_method_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:ibrahima_s_application_seter/core/app_export.dart';
+import 'package:ibrahima_s_application_seter/presentation/payment_method_screen/widgets/paymentmethod_item_widget.dart';
+
+import 'models/paymentmethod_item_model.dart';
+import 'notifier/payment_method_notifier.dart';
 
 class PaymentMethodScreen extends ConsumerStatefulWidget {
   const PaymentMethodScreen({Key? key}) : super(key: key);
@@ -112,13 +113,6 @@ class PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
       ImageConstant.imgRectangle38,
     ];
 
-    List<String> banqueImages = [
-      ImageConstant.imgBanque1,
-      ImageConstant.imgBanque1,
-      ImageConstant.imgBanque1,
-      ImageConstant.imgBanque1,
-    ];
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 26.h),
       child: Column(
@@ -135,16 +129,6 @@ class PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
               _buildMobileWalletItem(context, walletImages[1], onTap: () => onTapImgImage1(context)),
               _buildMobileWalletItem(context, walletImages[2], onTap: () => onTapImgImage2(context)),
               _buildMobileWalletItem(context, walletImages[3], onTap: () => onTapImgImage3(context)),
-            ],
-          ),
-          SizedBox(height: 25.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildBanqueItem(context, banqueImages[0], onTap: () => onTapBanqueImage(context)),
-              _buildBanqueItem(context, banqueImages[1], onTap: () => onTapBanqueImage1(context)),
-              _buildBanqueItem(context, banqueImages[2], onTap: () => onTapBanqueImage2(context)),
-              _buildBanqueItem(context, banqueImages[3], onTap: () => onTapBanqueImage3(context)),
             ],
           ),
         ],
@@ -205,60 +189,7 @@ class PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
     );
   }
 
-  Widget _buildBanqueItem(BuildContext context, String imagePath, {bool hasCheckmark = false, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 67.v,
-        width: 102.h,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.h),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.topRight,
-          children: [
-            CustomImageView(
-              imagePath: imagePath,
-              height: 67.v,
-              width: 102.h,
-              radius: BorderRadius.circular(8.h),
-              alignment: Alignment.center,
-            ),
-            if (hasCheckmark)
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  height: 7.v,
-                  width: 6.h,
-                  margin: EdgeInsets.only(top: 4.v, right: 4.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(3.h),
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgCheckmarkIndigo900,
-                    height: 7.v,
-                    width: 6.h,
-                    alignment: Alignment.center,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-/// Navigates to the lightVersionSixScreen when the action is triggered.
+  /// Navigates to the lightVersionSixScreen when the action is triggered.
   onTapVisa(BuildContext context) {
     NavigatorService.pushNamed(AppRoutes.lightVersionSixScreen);
   }
@@ -270,54 +201,21 @@ class PaymentMethodScreenState extends ConsumerState<PaymentMethodScreen> {
 
   /// Navigates to the lightVersionSixScreen when the action is triggered.
   onTapImgImage(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
+    NavigatorService.pushNamed(AppRoutes.lightVersionSixScreen);
   }
 
   /// Navigates to the lightVersionSixScreen when the action is triggered.
   onTapImgImage1(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
+    NavigatorService.pushNamed(AppRoutes.lightVersionSixScreen);
   }
 
   /// Navigates to the lightVersionSixScreen when the action is triggered.
   onTapImgImage2(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
+    NavigatorService.pushNamed(AppRoutes.lightVersionSixScreen);
   }
 
   /// Navigates to the lightVersionSixScreen when the action is triggered.
   onTapImgImage3(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
+    NavigatorService.pushNamed(AppRoutes.lightVersionSixScreen);
   }
-
-  onTapBanqueImage(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
-  }
-
-  onTapBanqueImage1(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
-  }
-
-  onTapBanqueImage2(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
-  }
-
-  onTapBanqueImage3(BuildContext context) {
-    NavigatorService.pushNamed(
-      AppRoutes.lightVersionSixScreen,
-    );
-  }
-
 }

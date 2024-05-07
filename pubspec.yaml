@@ -13,6 +13,8 @@ dependencies:
   flutter_riverpod: ^2.5.1
   video_player: ^2.2.13
   chewie: ^1.2.2
+  flutter_local_notifications: ^9.1.6
+  timezone: ^0.8.0
   webview_flutter: ^3.0.0
   flutter_map: ^5.0.0
   cupertino_icons: ^1.0.0
